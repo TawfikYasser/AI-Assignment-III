@@ -9,9 +9,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 public class HorseBoard extends JPanel {
-    public static JFrame f = new JFrame();
+
+
     public static ArrayList<ArrayList<Integer>> obstacles = new ArrayList<ArrayList<Integer>>();
     public static ArrayList<ArrayList<Integer>> finalMoves = new ArrayList<ArrayList<Integer>>();
+
+    public static JFrame f = new JFrame();
     public static JButton[][] btns;
 
     public static void main(String[] args) throws InterruptedException {
@@ -163,7 +166,7 @@ public class HorseBoard extends JPanel {
             Arrays.fill(row, 0); // 0 for empty
         Scanner scanner = new Scanner(System.in);
         int x, y;
-        System.out.print("Enter Hours State: ");
+        System.out.print("Enter Horse State: ");
         x = scanner.nextInt();
         y = scanner.nextInt();
         //*************************************************
@@ -184,13 +187,12 @@ public class HorseBoard extends JPanel {
         btns[gx][gy].setBackground(Color.red);
         btns[gx][gy].setForeground(Color.white);
 
-
         int numberOfBorders;
-        System.out.print("Enter number of borders: ");
+        System.out.print("Enter number of obstacles: ");
         numberOfBorders = scanner.nextInt();
         int bx, by;
         for (int i = 0; i < numberOfBorders; i++) {
-            System.out.print("Enter Border #" + (i + 1) + " state: ");
+            System.out.print("Enter Obstacle #" + (i + 1) + " : ");
             bx = scanner.nextInt();
             by = scanner.nextInt();
             obstacles.add(new ArrayList<>(Arrays.asList(bx, by)));
@@ -201,19 +203,30 @@ public class HorseBoard extends JPanel {
             btns[bx][by].setForeground(Color.white);
 
         }
-        System.out.println("Minimum number of moves: " + start(x, y, gx, gy, board));
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                System.out.print(board[i][j] + "  ");
-            }
-            System.out.println();
-        }
-        Collections.reverse(finalMoves);
-        System.out.println(finalMoves);
-        finalMoves.remove(0);
+        int mnm = start(x, y, gx, gy, board);
+        System.out.println("Minimum number of moves: " + mnm);
 
-        for (int i = 0; i < finalMoves.size(); i++) {
-            btns[finalMoves.get(i).get(0)][finalMoves.get(i).get(1)].setText("Move #" + (i + 1));
+
+        if (mnm != -1) {
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    System.out.print(board[i][j] + "  ");
+                }
+                System.out.println();
+            }
+            Collections.reverse(finalMoves);
+            System.out.println(finalMoves);
+            finalMoves.remove(0);
+
+            for (int i = 0; i < finalMoves.size(); i++) {
+                btns[finalMoves.get(i).get(0)][finalMoves.get(i).get(1)].setText("Move #" + (i + 1));
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            JOptionPane.showMessageDialog(f, "Minimum number of moves = " + mnm);
         }
     }
 
@@ -345,8 +358,6 @@ public class HorseBoard extends JPanel {
                 }
             }
         }
-
-
         return true;
     }
 
