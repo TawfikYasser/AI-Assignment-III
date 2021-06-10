@@ -2,6 +2,7 @@ import java.util.*;
 
 public class Main {
     public static ArrayList<ArrayList<Integer>> obstacles = new ArrayList<ArrayList<Integer>>();
+    public static ArrayList<ArrayList<Integer>> finalMoves = new ArrayList<ArrayList<Integer>>();
 
     public static void main(String[] args) {
         int[][] board = new int[8][8];
@@ -34,13 +35,15 @@ public class Main {
             obstacles.add(new ArrayList<>(Arrays.asList(bx, by)));
             board[bx][by] = 2; // 2 -> obstacle
         }
+        System.out.println("Minimum number of moves: " + start(x, y, gx, gy, board));
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 System.out.print(board[i][j] + "  ");
             }
             System.out.println();
         }
-        System.out.println("Minimum number of moves: "+start(x, y, gx, gy, board));
+        Collections.reverse(finalMoves);
+        System.out.println(finalMoves);
     }
 
     // The following function to check if the next move is valid [not out of the scope of the board]
@@ -70,15 +73,16 @@ public class Main {
             int y = nextMoves.get(0).get(1);
             int dist = nextMoves.get(0).get(2);
             nextMoves.remove(0);
-            //System.out.println("Parent: x= " + x + " ,y= " + y + " ,Distance= " + dist);
             // if the destination is reached, return distance
             if (x == dx && y == dy) {
+                visitedCells.add(new ArrayList<>(Arrays.asList(x, y, dist)));
+                getPaths(visitedCells, dist,board,finalMoves);
                 return dist;
             }
             // skip if the location is visited before
-            if (!visitedCells.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+            if (!visitedCells.contains(new ArrayList<>(Arrays.asList(x, y, dist)))) {
                 // mark the current node as visited
-                visitedCells.add(new ArrayList<>(Arrays.asList(x, y)));
+                visitedCells.add(new ArrayList<>(Arrays.asList(x, y, dist)));
                 //Find all possible moves to the current state - These moves are 8 but not all will be valid to move
                 for (int i = 0; i < 8; i++) {
                     //Get next possible move
@@ -86,12 +90,11 @@ public class Main {
                     int y1 = y + upDown[i];
                     // Check of the next move we can use it again
                     if (canMoveToPosition(x1, y1)) {
-                        if(!checkObstacleX(x,y,x1,y1)){
-                            if(!checkObstacleY(x,y,x1,y1)){
+                        if (!checkObstacleX(x, y, x1, y1)) {
+                            if (!checkObstacleY(x, y, x1, y1)) {
                                 continue;
                             }
                         }
-                        //System.out.println("Child: " + x1 + " , " + y1);
                         nextMoves.add(new ArrayList<>(Arrays.asList(x1, y1, dist + 1)));
                     }
                 }
@@ -99,39 +102,78 @@ public class Main {
         }
         return -1;
     }
+
     public static boolean checkObstacleX(int x, int y, int x1, int y1) {
         int a = Math.abs(x1 - x);
         int b = Math.abs(y1 - y);
-        for(int i = 1;i<=a;i++){
+        for (int i = 1; i <= a; i++) {
             x++;
-            if(obstacles.contains(new ArrayList<>(Arrays.asList(x,y)))){
+            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
                 return false;
             }
         }
-        for(int i =1;i<=b;i++){
+        for (int i = 1; i <= b; i++) {
             y++;
-            if(obstacles.contains(new ArrayList<>(Arrays.asList(x,y)))){
+            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
                 return false;
             }
         }
         return true;
     }
+
     public static boolean checkObstacleY(int x, int y, int x1, int y1) {
         int a = Math.abs(x1 - x);
         int b = Math.abs(y1 - y);
-        for(int i =1;i<=b;i++){
+        for (int i = 1; i <= b; i++) {
             y++;
-            if(obstacles.contains(new ArrayList<>(Arrays.asList(x,y)))){
+            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
                 return false;
             }
         }
-        for(int i = 1;i<=a;i++){
+        for (int i = 1; i <= a; i++) {
             x++;
-            if(obstacles.contains(new ArrayList<>(Arrays.asList(x,y)))){
+            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    public static void getPaths(ArrayList<ArrayList<Integer>> visited, int dist,int[][] board,ArrayList<ArrayList<Integer>> fMoves) {
+
+        int[] rightLeft = {2, 2, -2, -2, 1, 1, -1, -1};
+        int[] upDown = {-1, 1, 1, -1, 2, -2, 2, -2};
+        int x, y, d;
+        x = visited.get(visited.size() - 1).get(0);
+        y = visited.get(visited.size() - 1).get(1);
+        d = visited.get(visited.size() - 1).get(2);
+        fMoves.add(new ArrayList<>(Arrays.asList(x,y,d)));
+        int k = dist;
+        dist--;
+        int flag = 0;
+        for (int i = 0; i < k; i++) {
+            flag = 0;
+            for (int j = 0; j < 8; j++) {
+                int x1 = x - rightLeft[j];
+                int y1 = y - upDown[j];
+                for (int h = 0; h < visited.size(); h++) {
+                    if (visited.get(h).get(0) == x1 && visited.get(h).get(1) == y1 && visited.get(h).get(2) == dist) {
+                        dist--;
+                        board[visited.get(h).get(0)][visited.get(h).get(1)] = 1;
+                        fMoves.add(new ArrayList<>(Arrays.asList(visited.get(h).get(0),visited.get(h).get(1),visited.get(h).get(2))));
+                        x = visited.get(h).get(0);
+                        y = visited.get(h).get(1);
+                        d = visited.get(h).get(2);
+                        flag = 1;
+                        break;
+                    }
+                }
+                if(flag == 1){
+
+                    break;
+                }
+            }
+        }
     }
 }
