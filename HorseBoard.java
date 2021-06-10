@@ -12,7 +12,8 @@ public class HorseBoard extends JPanel {
     public static JFrame f = new JFrame();
     public static ArrayList<ArrayList<Integer>> obstacles = new ArrayList<ArrayList<Integer>>();
     public static ArrayList<ArrayList<Integer>> finalMoves = new ArrayList<ArrayList<Integer>>();
-    public static JButton[][] btns ;
+    public static JButton[][] btns;
+
     public static void main(String[] args) throws InterruptedException {
         JButton b1 = new JButton("");
         JButton b2 = new JButton("");
@@ -211,10 +212,11 @@ public class HorseBoard extends JPanel {
         System.out.println(finalMoves);
         finalMoves.remove(0);
 
-        for(int i = 0 ;i<finalMoves.size();i++){
-            btns[finalMoves.get(i).get(0)][finalMoves.get(i).get(1)].setText("Move #"+(i+1));
+        for (int i = 0; i < finalMoves.size(); i++) {
+            btns[finalMoves.get(i).get(0)][finalMoves.get(i).get(1)].setText("Move #" + (i + 1));
         }
     }
+
     // The following function to check if the next move is valid [not out of the scope of the board]
     static boolean canMoveToPosition(int x, int y) {
         if (x < 0 || y < 0 || x >= 8 || y >= 8) {
@@ -245,7 +247,7 @@ public class HorseBoard extends JPanel {
             // if the destination is reached, return distance
             if (x == dx && y == dy) {
                 visitedCells.add(new ArrayList<>(Arrays.asList(x, y, dist)));
-                getPaths(visitedCells, dist,board,finalMoves);
+                getPaths(visitedCells, dist, board, finalMoves);
                 return dist;
             }
             // skip if the location is visited before
@@ -275,41 +277,80 @@ public class HorseBoard extends JPanel {
     public static boolean checkObstacleX(int x, int y, int x1, int y1) {
         int a = Math.abs(x1 - x);
         int b = Math.abs(y1 - y);
-        for (int i = 1; i <= a; i++) {
-            x++;
-            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
-                return false;
+        if ((x1 - x) < 0) {
+            for (int i = 1; i <= a; i++) {
+                x--;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
+            }
+        } else {
+            for (int i = 1; i <= a; i++) {
+                x++;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
             }
         }
-        for (int i = 1; i <= b; i++) {
-            y++;
-            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
-                return false;
+
+        if ((y1 - y) < 0) {
+            for (int i = 1; i <= b; i++) {
+                y--;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
+            }
+        } else {
+            for (int i = 1; i <= b; i++) {
+                y++;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
             }
         }
+
         return true;
     }
 
     public static boolean checkObstacleY(int x, int y, int x1, int y1) {
         int a = Math.abs(x1 - x);
         int b = Math.abs(y1 - y);
-        for (int i = 1; i <= b; i++) {
-            y++;
-            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
-                return false;
+        if ((y1 - y) < 0) {
+            for (int i = 1; i <= b; i++) {
+                y--;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
+            }
+        } else {
+            for (int i = 1; i <= b; i++) {
+                y++;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
             }
         }
-        for (int i = 1; i <= a; i++) {
-            x++;
-            if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
-                return false;
+        if ((x1 - x) < 0) {
+            for (int i = 1; i <= a; i++) {
+                x--;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
+            }
+        } else {
+            for (int i = 1; i <= a; i++) {
+                x++;
+                if (obstacles.contains(new ArrayList<>(Arrays.asList(x, y)))) {
+                    return false;
+                }
             }
         }
+
 
         return true;
     }
 
-    public static void getPaths(ArrayList<ArrayList<Integer>> visited, int dist,int[][] board,ArrayList<ArrayList<Integer>> fMoves) {
+    public static void getPaths(ArrayList<ArrayList<Integer>> visited, int dist, int[][] board, ArrayList<ArrayList<Integer>> fMoves) {
 
         int[] rightLeft = {2, 2, -2, -2, 1, 1, -1, -1};
         int[] upDown = {-1, 1, 1, -1, 2, -2, 2, -2};
@@ -317,7 +358,7 @@ public class HorseBoard extends JPanel {
         x = visited.get(visited.size() - 1).get(0);
         y = visited.get(visited.size() - 1).get(1);
         d = visited.get(visited.size() - 1).get(2);
-        fMoves.add(new ArrayList<>(Arrays.asList(x,y,d)));
+        fMoves.add(new ArrayList<>(Arrays.asList(x, y, d)));
         int k = dist;
         dist--;
         int flag = 0;
@@ -330,7 +371,7 @@ public class HorseBoard extends JPanel {
                     if (visited.get(h).get(0) == x1 && visited.get(h).get(1) == y1 && visited.get(h).get(2) == dist) {
                         dist--;
                         board[visited.get(h).get(0)][visited.get(h).get(1)] = 1;
-                        fMoves.add(new ArrayList<>(Arrays.asList(visited.get(h).get(0),visited.get(h).get(1),visited.get(h).get(2))));
+                        fMoves.add(new ArrayList<>(Arrays.asList(visited.get(h).get(0), visited.get(h).get(1), visited.get(h).get(2))));
                         x = visited.get(h).get(0);
                         y = visited.get(h).get(1);
                         d = visited.get(h).get(2);
@@ -338,13 +379,14 @@ public class HorseBoard extends JPanel {
                         break;
                     }
                 }
-                if(flag == 1){
+                if (flag == 1) {
 
                     break;
                 }
             }
         }
     }
+
     public static void make() {
         f.setLayout(new GridLayout(8, 8));
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
