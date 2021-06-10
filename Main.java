@@ -41,13 +41,6 @@ public class Main {
             System.out.println();
         }
         System.out.println("Minimum number of moves: "+start(x, y, gx, gy, board));
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                System.out.print(board[i][j] + "  ");
-            }
-            System.out.println();
-        }
-        
     }
 
     // The following function to check if the next move is valid [not out of the scope of the board]
@@ -67,8 +60,6 @@ public class Main {
         int[] upDown = {-1, 1, 1, -1, 2, -2, 2, -2};
         //Array to store visited nodes.
         ArrayList<ArrayList<Integer>> visitedCells = new ArrayList<ArrayList<Integer>>();
-        //All Moves
-        ArrayList<ArrayList<Integer>> allMoves = new ArrayList<ArrayList<Integer>>();
         //Array to store next moves
         ArrayList<ArrayList<Integer>> nextMoves = new ArrayList<ArrayList<Integer>>();
         nextMoves.add(new ArrayList<Integer>(Arrays.asList(sx, sy, 0)));
@@ -80,15 +71,8 @@ public class Main {
             int dist = nextMoves.get(0).get(2);
             nextMoves.remove(0);
             //System.out.println("Parent: x= " + x + " ,y= " + y + " ,Distance= " + dist);
-            if(!allMoves.contains(new ArrayList<>(Arrays.asList(x,y)))){
-                allMoves.add(new ArrayList<>(Arrays.asList(x,y)));
-
-                    board[x][y] = 1;
-            }
             // if the destination is reached, return distance
             if (x == dx && y == dy) {
-                board[dx][dy] = 9;
-                System.out.println(allMoves);
                 return dist;
             }
             // skip if the location is visited before
